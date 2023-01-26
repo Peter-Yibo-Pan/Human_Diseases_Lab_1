@@ -1,0 +1,68 @@
+---
+title: "Lab 1: Molecular Mechanisms for Human Diseases"
+output:
+  github_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+theme_set(theme_minimal())
+```
+
+Data: 
+```{r import data}
+#import A
+novick_a <- read.csv("data/g149novickA.csv", header = FALSE) 
+novick_a <- novick_a %>%   
+  separate_wider_delim(1, ",", names = c("time", "concentration")) 
+#import B
+novick_b <- read.csv("data/g149novickB.csv", header = FALSE) 
+novick_b <- novick_b %>%   
+  separate_wider_delim(1, ",", names = c("time", "concentration")) 
+
+```
+
+``` {r wrangling}
+#separate A
+
+#separate B
+
+#add column titles
+
+```
+
+Visualization of Data set A
+```{r plot_A}
+
+
+
+```
+Fitting function on Data set A
+```{r fit_function_A}
+#define function
+
+#fit function
+
+
+```
+
+Analysis: 
+
+
+Visualization of Data set B
+```{r plot_B}
+
+```
+Fitting function on Data set B
+```{r fit_function_B}
+#define function
+
+#fit function
+```
+
+Analysis: 
+
+
+
