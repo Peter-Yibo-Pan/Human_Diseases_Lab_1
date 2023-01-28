@@ -47,9 +47,9 @@ novick_a %>%
 Fitting function on Data set A
 ```{r fit_function_A}
 #define function
-growth_a <- function (time, ampl, tau) (ampl*(1-time/tau))
+growth_a <- function (t, ampl, tau) (ampl*(1-t/tau))
 #fit function
-nls(novick_a$concentration ~ growth_a(time, myA, myT), data = novick_a, start = list(myA = 1.26, myT = 2.62))
+nls(novick_a$concentration ~ growth_a(novick_a$time, myA, myT), data = novick_a, start = list(myA = 1.26, myT = 2.62))
 
 fit = nls(concentration ~ a*(1-time/tau), data = novick_a, start (a = 0, tau = 0))
 print (fit)
@@ -75,9 +75,30 @@ novick_b %>%
 ```
 Fitting function on Data set B
 ```{r fit_function_B}
-#define function
 
-#fit function
+# get data for 10<=t<=15
+b_q2 <- novick_b %>% 
+  filter(time >= 10) %>% 
+  filter(time <= 15)
+# fit straight line for 10<= t <= 15
+
+coefficients <- lm(b_q2$concentration ~ b_q2$time)
+
+# plot
+
+novick_b %>%
+  ggplot(aes(x = time, y = concentration)) + 
+  geom_point() + 
+  labs(
+    title = "growth of beta-gal", 
+    subtitle = "in response to lower TMG concentration", 
+    x = "time (hours)", 
+    y = "fraction of maximum beta-gal"
+  ) + 
+  geom_abline(
+    intercept = coefficients[[1]][1], 
+    slope = coefficients[[1]][2])
+
 ```
 
 Analysis: 
