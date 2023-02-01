@@ -1,17 +1,7 @@
-Lab project outline: 
+Questions for 2/1/23: 
 
+What is the range for time for each? Should they be the same as dataset or a continuous range from 0
 
-1.Import data sets: 
-   g149novickA and g149novickB
-  
-  
-  
-Libraries: 
-ggplot
+in derivation, how to explain the physical meaning of other items such as Volume, Number, and Flow Rate
 
-nls (nonlinear least squares) function for fitting
-
-
-
-2.Fit function A
-3. Fit function B
+How to use / explain the use of starting values for functions
