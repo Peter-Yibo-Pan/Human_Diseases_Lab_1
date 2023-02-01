@@ -13,17 +13,25 @@ theme_set(theme_minimal())
 
 Data: 
 ```{r import data}
-#import A; separate columns and add titles; render as number
+#import A;
 novick_a <- read.csv("data/g149novickA.csv", header = FALSE) 
 novick_a <- novick_a %>%   
-  separate_wider_delim(1, ",", names = c("time", "concentration")) %>%
-  mutate_if(is.character, as.double)
+  # separate columns and add titles;
+  separate_wider_delim(1, ",", names = c("t", "concentration")) %>%
+  # render as number
+  mutate_if(is.character, as.numeric) %>%
+  # show result
+  glimpse()
 
-#import B; separate columns and add titles; render as number
+#import B; 
 novick_b <- read.csv("data/g149novickB.csv", header = FALSE) 
 novick_b <- novick_b %>%   
-  separate_wider_delim(1, ",", names = c("time", "concentration")) %>%
-  mutate_if(is.character, as.double)
+  # separate columns and add titles;
+  separate_wider_delim(1, ",", names = c("t", "concentration")) %>% 
+  # render as number
+  mutate_if(is.character, as.numeric) %>%
+  # show result
+  glimpse()
 
 ```
 
@@ -31,7 +39,7 @@ Visualization of Data set A
 ```{r plot_A}
 #plot_title <- glue::glue("")
 novick_a %>%
-  ggplot(aes(x = time, y = concentration)) + 
+  ggplot(aes(x = t, y = concentration)) + 
   geom_point() + 
   labs(
     title = "growth of beta-gal ",
@@ -47,12 +55,27 @@ novick_a %>%
 Fitting function on Data set A
 ```{r fit_function_A}
 #define function
-growth_a <- function (t, ampl, tau) (ampl*(1-t/tau))
-#fit function
-nls(novick_a$concentration ~ growth_a(novick_a$time, myA, myT), data = novick_a, start = list(myA = 1.26, myT = 2.62))
+growth_a <- function (t, ampl, tau) (ampl*(1- exp(-(t/tau))))
+  
+#fit function without (0,0)
+a_q2 <- nls(novick_a$concentration ~ growth_a(t, ampl, tau), data = novick_a, start = list(ampl = 1.26, tau = 2.62))
 
-fit = nls(concentration ~ a*(1-time/tau), data = novick_a, start (a = 0, tau = 0))
-print (fit)
+coef_a <- coef(a_q2)
+#create dataframe for function
+df_a_growth <- data.frame(x = t, y = growth_a(t, ampl = coef_a[[1]], tau = coef_a[[2]]))
+
+novick_a %>%
+  ggplot() + 
+  geom_point(aes(x = t, y = concentration)) + 
+  labs(aes(x = t, y = concentration), 
+    title = "growth of beta-gal", 
+    subtitle = "in response to high TMG concentration", 
+    x = "time (hours)", 
+    y = "fraction of maximum beta-gal"
+  ) + 
+  geom_line(aes(x = t, y = concentration, data = df_a_growth), 
+    ampl = coef_a[[1]], 
+    tau = coef_a[[2]])
 
 
 ```
@@ -63,7 +86,7 @@ Analysis:
 Visualization of Data set B
 ```{r plot_B}
 novick_b %>%
-  ggplot(aes(x = time, y = concentration)) + 
+  ggplot(aes(x = t, y = concentration)) + 
   geom_point() + 
   labs(
     title = "growth of beta-gal", 
@@ -78,16 +101,16 @@ Fitting function on Data set B
 
 # get data for 10<=t<=15
 b_q2 <- novick_b %>% 
-  filter(time >= 10) %>% 
-  filter(time <= 15)
+  filter(t >= 10) %>% 
+  filter(t <= 15)
 # fit straight line for 10<= t <= 15
 
-coefficients <- lm(b_q2$concentration ~ b_q2$time)
-
+b_q2 <- lm(b_q2$concentration ~ b_q2$t)
+coef_b <- coef(b_q2)
 # plot
 
 novick_b %>%
-  ggplot(aes(x = time, y = concentration)) + 
+  ggplot(aes(x = t, y = concentration)) + 
   geom_point() + 
   labs(
     title = "growth of beta-gal", 
@@ -96,8 +119,8 @@ novick_b %>%
     y = "fraction of maximum beta-gal"
   ) + 
   geom_abline(
-    intercept = coefficients[[1]][1], 
-    slope = coefficients[[1]][2])
+    intercept = coef_b[[1]], 
+    slope = coef_b[[2]])
 
 ```
 
