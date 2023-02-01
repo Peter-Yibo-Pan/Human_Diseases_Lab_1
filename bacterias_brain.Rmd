@@ -1,5 +1,6 @@
 ---
-title: "Lab 1: Molecular Mechanisms for Human Diseases"
+title: "Molecular Mechanisms for Human Diseases: Lab 1"
+subtitle: "Bacteria's Brain"
 output:
   github_document:
     toc: true
@@ -11,7 +12,9 @@ library(tidyverse)
 theme_set(theme_minimal())
 ```
 
-Data: 
+Data:
+
+
 ```{r import data}
 #import A;
 novick_a <- read.csv("data/g149novickA.csv", header = FALSE) 
@@ -36,6 +39,7 @@ novick_b <- novick_b %>%
 ```
 
 Visualization of Data set A
+
 ```{r a_Q1}
 #plot_title <- glue::glue("")
 novick_a %>%
@@ -49,20 +53,22 @@ novick_a %>%
   ) 
 
 ```
+
 Fitting function on Data set A
+
 ```{r a_q2&3}
 #define function
 growth_a <- function (t, ampl, tau) (ampl*(1- exp(-(t/tau))))
   
 #fit function without (0,0)
-a_q2 <- nls(novick_a$concentration ~ growth_a(t, ampl, tau), data = novick_a, start = list(ampl = 1.26, tau = 2.62))
+a_q2_fn <- nls(novick_a$concentration ~ growth_a(t, ampl, tau), data = novick_a, start = list(ampl = 1.26, tau = 2.62))
 
-coef_a <- coef(a_q2)
+coef_a2 <- coef(a_q2_fn)
 #create dataframe for function
-growth_a <- tibble(t = 0:7, 
+a_q2_fit <- tibble(t = 0:7, 
                    concentration = growth_a(t, 
-                                            ampl = coef_a[[1]], 
-                                            tau = coef_a[[2]]))
+                                            ampl = coef_a2[[1]], 
+                                            tau = coef_a2[[2]]))
 
 novick_a %>%
   ggplot(aes(x = t, y = concentration)) + 
@@ -73,15 +79,47 @@ novick_a %>%
     x = "time (hours)", 
     y = "fraction of maximum beta-gal"
   )  +
-  geom_line(aes(x = t, y = concentration), data = growth_a)
+  geom_line(aes(x = t, y = concentration), data = a_q2_fit)
 
+
+#fit data with (0,0)
+
+# add (0,0) to data
+a_q3_df <- novick_a %>%
+  rbind(c(0,0))
+# fit data again
+a_q3_fit <- nls(a_q3_df$concentration ~ growth_a(t, ampl, tau), data = a_q3_df, start = list(ampl = 1.26, tau = 2.62))
+
+coef_a3 <- coef(a_q3_fit)
+
+coef_comp <- coef_a2 %>% 
+  rbind (coef_a3) %>%
+  print()
+# create data frame for function
+a_q3_fit <- tibble(t = 0:7, 
+                   concentration = growth_a(t, 
+                                            ampl = coef_a3[[1]], 
+                                            tau = coef_a3[[2]]))
+# plot new data frame
+a_q3_df %>%
+  ggplot(aes(x = t, y = concentration)) + 
+  geom_point() + 
+  labs( 
+    title = "growth of beta-gal", 
+    subtitle = "in response to high TMG concentration", 
+    x = "time (hours)", 
+    y = "fraction of maximum beta-gal"
+  )  +
+  geom_line(aes(x = t, y = concentration), data = a_q3_fit)
+
+## plot two lines over each other? 
 
 ```
 
-Analysis: 
-
+Analysis:
 
 Visualization of Data set B
+
 ```{r b_q1}
 novick_b %>%
   ggplot(aes(x = t, y = concentration)) + 
@@ -93,7 +131,9 @@ novick_b %>%
     y = "fraction of maximum beta-gal"
   ) 
 ```
+
 Fitting function on Data set B
+
 ```{r b_q2}
 # get data for 10<=t<=15
 b_q2 <- novick_b %>% 
@@ -120,19 +160,18 @@ novick_b %>%
 
 ```
 
-
-```{r b_q3&4}
+```{r b_q3}
 # fit function from a
 # define function
-growth_b <- function (t, ampl, tau) (ampl*(1- exp(-(t/tau))))
+growth_b3 <- function (t, ampl, tau) (ampl*(1- exp(-(t/tau))))
 
 # fit function
-b_q3 <- nls(novick_b$concentration ~ growth_b(t, ampl, tau), data = novick_b, start = list(ampl = 5, tau = 10))
+b_q3 <- nls(novick_b$concentration ~ growth_b3(t, ampl, tau), data = novick_b, start = list(ampl = 5, tau = 10))
 
 coef_b3 <- coef(b_q3)
 # create dataframe for function
-growth_b <- tibble(t = 0:20, 
-                   concentration = growth_b(t, 
+b_q3_fit <- tibble(t = 0:30, 
+                   concentration = growth_b3(t, 
                                             ampl = coef_b3[[1]], 
                                             tau = coef_b3[[2]]))
 # plot
@@ -145,11 +184,32 @@ novick_a %>%
     x = "time (hours)", 
     y = "fraction of maximum beta-gal"
   )  +
-  geom_line(aes(x = t, y = concentration), data = growth_a)
+  geom_line(aes(x = t, y = concentration), data = growth_b3)
 
 ```
 
-Analysis: 
+```{r b_q4}
+# Separate data for t<= 15
+
+b_q3_df <- novick_b %>%
+  filter(t <= 15)
 
 
+# define function
+growth_b4 <- function (t, beta, tau) (beta * (-1 + t/tau + exp(-t/tau)))
 
+# fit function
+b_q4 <- nls(novick_b$concentration ~ growth_b4(t, beta, tau), data = novick_b, start = list(beta = 5, tau = 10))
+
+coef_b4 <- coef(b_q4)
+# create dataframe for function
+b_q4_fit <- tibble(t = 0:30, 
+                   concentration = growth_b4(t, 
+                                            ampl = coef_b4[[1]], 
+                                            tau = coef_b4[[2]]))
+
+```
+
+Q5: at large t, the function becomes linear as -t/tau becomes 0 so exp(-t/tau) becomes a constant of 1
+
+Analysis:
