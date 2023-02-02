@@ -1,6 +1,6 @@
 ---
 title: "Molecular Mechanisms for Human Diseases: Lab 1"
-subtitle: "Bacteria's Brain -- Part A"
+subtitle: "Bacteria's Brain"
 output:
   github_document:
     toc: true
@@ -179,7 +179,7 @@ b_q3_fit <- tibble(t = 0:30,
                                             ampl = coef_b3[[1]], 
                                             tau = coef_b3[[2]]))
 # plot
-novick_b %>%
+novick_a %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point() + 
   labs( 
@@ -203,29 +203,14 @@ b_q4_df <- novick_b %>%
 growth_b4 <- function (t, beta, tau) (beta * (-1 + t/tau + exp(-t/tau)))
 
 # fit function
-b_q4 <- nls(b_q4_df$concentration ~ growth_b4(t, beta, tau), data = b_q4_df, start = list(beta = 1, tau = 1))
-
-
+b_q4 <- nls(b_q4_df$concentration ~ growth_b4(t, beta, tau), data = b_q4_df, start = list(beta = 5, tau = 10))
 
 coef_b4 <- coef(b_q4)
 # create dataframe for function
 b_q4_fit <- tibble(t = 0:30, 
                    concentration = growth_b4(t, 
-                                            beta = coef_b4[[1]], 
+                                            ampl = coef_b4[[1]], 
                                             tau = coef_b4[[2]]))
-# graph
-
-b_q4_df %>%
-  ggplot(aes(x = t, y = concentration)) + 
-  geom_point() + 
-  labs( 
-    title = "growth of beta-gal", 
-    subtitle = "in response to high TMG concentration", 
-    x = "time (hours)", 
-    y = "fraction of maximum beta-gal"
-  )  +
-  geom_line(aes(x = t, y = concentration), data = b_q4_fit)
-
 
 ```
 
