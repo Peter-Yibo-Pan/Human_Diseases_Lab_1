@@ -105,7 +105,8 @@ a_q3_df %>%
     x = "time (hours)", 
     y = "fraction of maximum beta-gal"
   )+
-  stat_function(fun = growth_a, 
+  stat_function(color = "blue", 
+    fun = growth_a, 
                 args = c(ampl = coef_a3[[1]], 
                          tau = coef_a3[[2]]))
 
@@ -138,6 +139,7 @@ b_q2 <- novick_b %>%
 
 b_q2_fit <- lm(b_q2$concentration ~ b_q2$t)
 coef_b2 <- coef(b_q2_fit)
+print(coef_b2)
   # plot
 novick_b %>%
   ggplot(aes(x = t, y = concentration)) + 
@@ -148,7 +150,7 @@ novick_b %>%
     x = "time (hours)", 
     y = "fraction of maximum beta-gal"
   ) + 
-  geom_abline(
+  geom_abline(color = "red",
     intercept = coef_b2[[1]], 
     slope = coef_b2[[2]])
 
