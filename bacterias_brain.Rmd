@@ -1,9 +1,9 @@
 ---
-title: "Molecular Mechanisms for Human Diseases: Lab 1"
+title: 'Molecular Mechanisms for Human Diseases: Lab 1'
 subtitle: "Bacteria's Brain -- Part A"
 output:
-  github_document:
-    toc: true
+  html_document:
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +12,7 @@ library(tidyverse)
 theme_set(theme_minimal())
 ```
 
-Data: Here we start by importing data from csv files
+Analysis:
 
 ```{r import data}
 #import A;
@@ -23,7 +23,7 @@ novick_a <- novick_a %>%
   # render as number
   mutate_if(is.character, as.numeric) %>%
   # show result
-  glimpse()
+  print()
 
 #import B; 
 novick_b <- read.csv("data/g149novickB.csv", header = FALSE) 
@@ -33,7 +33,7 @@ novick_b <- novick_b %>%
   # render as number
   mutate_if(is.character, as.numeric) %>%
   # show result
-  glimpse()
+  print()
 
 ```
 
@@ -44,8 +44,8 @@ a_q1_graph <- novick_a %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point() + 
   labs(
-    title = "growth of beta-gal ",
-    subtitle = "in response to high TMG concentration",
+    title = expression(paste("Growth of  ", beta, "-gal")), 
+    subtitle = "In response to high TMG concentration",
     x = "time (hours)", 
     y = "fraction of maximum beta-gal"
   ) 
@@ -69,10 +69,10 @@ novick_a %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point(data = novick_a) + 
   labs( 
-    title = "growth of beta-gal", 
+    title = expression(paste("Growth of  ", beta, "-gal")), 
     subtitle = "in response to high TMG concentration", 
     x = "time (hours)", 
-    y = "fraction of maximum beta-gal"
+    y = expression(paste("concentration of  ", beta, "-gal"))
   )+
   stat_function(fun = growth_a, 
                 args = c(ampl = coef_a2[[1]], 
@@ -98,12 +98,13 @@ print(summary(a_q3_fit))
 # plot new fitted curve over data
 a_q3_df %>%
   ggplot(aes(x = t, y = concentration)) + 
+  geom_point(color = "blue")+
   geom_point(data = novick_a) + 
   labs( 
-    title = "growth of beta-gal", 
+    title = expression(paste("Growth of  ", beta, "-gal")), 
     subtitle = "in response to high TMG concentration", 
     x = "time (hours)", 
-    y = "fraction of maximum beta-gal"
+    y = expression(paste("concentration of  ", beta, "-gal"))
   )+
   stat_function(color = "blue", 
     fun = growth_a, 
@@ -121,10 +122,10 @@ novick_b %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point() + 
   labs(
-    title = "growth of beta-gal", 
+    title = expression(paste("Growth of  ", beta, "-gal")), 
     subtitle = "in response to lower TMG concentration", 
     x = "time (hours)", 
-    y = "fraction of maximum beta-gal"
+    y = expression(paste("fraction of maximum  ", beta, "-gal"))
   ) 
 ```
 
@@ -146,29 +147,44 @@ print(coef_b2)
   # plot
 novick_b %>%
   ggplot(aes(x = t, y = concentration)) + 
-  geom_point() + 
+  geom_point(color = "blue") + 
+  geom_point(data = b_q2, aes(color = "red"))+ 
   labs(
-    title = "growth of beta-gal", 
+    title = expression(paste("Growth of  ", beta, "-gal")), 
     subtitle = "in response to lower TMG concentration", 
     x = "time (hours)", 
-    y = "fraction of maximum beta-gal"
+    y = expression(paste("fraction of maximum  ", beta, "-gal"))
   ) + 
   geom_abline(color = "red",
     intercept = coef_b2[[1]], 
-    slope = coef_b2[[2]])
+    slope = coef_b2[[2]])  + 
+  theme(legend.position = "none")
+
+# compare fit
+print(b_q2_summ)
+
+# fit same line over the entire dataset
+# predict with linear model with entire dataset
+b_q2_pred <- predict(b_q2_fit, newdata = data.frame(t = b_q2$t))
+b_q2_mse <- mean((b_q2$concentration - b_q2_pred)^2)
+
+b_q2_pred_all <- predict(b_q2_fit, newdata = data.frame(t = novick_b$t))
+b_q2_mse_all <- mean((novick_b$concentration - b_q2_pred_all)^2)
+
+tibble(MSE = c(b_q2_mse, b_q2_mse_all)) %>%
+  signif(3) %>%
+  mutate(data = c("10<= t <= 15", "entire dataset")) %>%
+  print()
 
 
 ```
+
+As we can see, the Mean Standard Error (MSE) for the model fits well within the range of 10\<= t \<= 15, but not well over the entire data set.
 
 ```{r b_q3}
 # fit function from a
 # define function
 growth_b3 <- function (t, ampl, tau) (ampl*(1- exp(-(t/tau))))
-
-# fit function
-b_q3 <- nls(novick_b$concentration ~ growth_b3(t, ampl, tau), data = novick_b, start = list(ampl = 1, tau = 19))
-
-traceback()
 
 # generate an example function
 # downscale function from A
@@ -178,14 +194,14 @@ novick_b %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point() + 
   labs( 
-    title = "growth of beta-gal", 
+    title = expression(paste("Growth of  ", beta, "-gal")), 
     subtitle = "in response to lower TMG concentration", 
     x = "time (hours)", 
-    y = "fraction of maximum beta-gal"
+    y = expression(paste("fraction of maximum  ", beta, "-gal"))
   )  +
   stat_function(fun = growth_b3, 
                 args = c(ampl = 0.4, 
-                         tau = 1e-10))
+                         tau = 7))
 ```
 
 ```{r b_q4}
@@ -209,19 +225,21 @@ coef_b4 <- coef(b_q4)
 
 b_q4_df %>%
   ggplot(aes(x = t, y = concentration)) + 
-  geom_point(aes(color = "blue")) + 
-  geom_point(data = novick_b, aes(color = "red"))+
+  geom_point(data = novick_b, color = "red")+
+  geom_point(color = "blue") + 
   labs( 
-    title = "growth of beta-gal", 
+    title = expression(paste("Growth of  ", beta, "-gal")), 
     subtitle = "in response to high TMG concentration", 
     x = "time (hours)", 
-    y = "fraction of maximum beta-gal")  +
+    y = expression(paste("fraction of maximum  ", beta, "-gal"))
+    )  +
   geom_abline(color = "red",
               intercept = coef_b2[[1]], 
               slope = coef_b2[[2]]) +
   stat_function(fun = growth_b4, 
                 args = c(beta = coef_b4[[1]], 
-                         tau = coef_b4[[2]]))
+                         tau = coef_b4[[2]])) +
+  theme(legend.position = "none")
 ```
 
 Q5: at large t, the function becomes linear as -t/tau becomes 0 so exp(-t/tau) becomes a constant of 1
