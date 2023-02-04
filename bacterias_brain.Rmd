@@ -94,7 +94,7 @@ coef_a3 <- coef(a_q3_fit)
 coef_comp <- coef_a2 %>% 
   rbind (coef_a3) %>%
   print()
-
+print(summary(a_q3_fit))
 # plot new fitted curve over data
 a_q3_df %>%
   ggplot(aes(x = t, y = concentration)) + 
@@ -139,7 +139,10 @@ b_q2 <- novick_b %>%
 
 b_q2_fit <- lm(b_q2$concentration ~ b_q2$t)
 coef_b2 <- coef(b_q2_fit)
+b_q2_summ <- summary(b_q2_fit)
+
 print(coef_b2)
+
   # plot
 novick_b %>%
   ggplot(aes(x = t, y = concentration)) + 
@@ -163,9 +166,12 @@ novick_b %>%
 growth_b3 <- function (t, ampl, tau) (ampl*(1- exp(-(t/tau))))
 
 # fit function
-b_q3 <- nls(novick_b$concentration ~ growth_b3(t, ampl, tau), data = novick_b, start = list(ampl = 0.8, tau = 100))
+b_q3 <- nls(novick_b$concentration ~ growth_b3(t, ampl, tau), data = novick_b, start = list(ampl = 1, tau = 19))
 
-coef_b3 <- coef(b_q3)
+traceback()
+
+# generate an example function
+# downscale function from A
 
 # plot the fitted function
 novick_b %>%
@@ -178,8 +184,8 @@ novick_b %>%
     y = "fraction of maximum beta-gal"
   )  +
   stat_function(fun = growth_b3, 
-                args = c(ampl = coef_b3[[1]], 
-                         tau = coef_b3[[2]]))
+                args = c(ampl = 0.4, 
+                         tau = 1e-10))
 ```
 
 ```{r b_q4}
@@ -193,9 +199,8 @@ b_q4_df <- novick_b %>%
 growth_b4 <- function (t, beta, tau) (beta * (-1 + t/tau + exp(-t/tau)))
 
 # fit function
-b_q4 <- nls(b_q4_df$concentration ~ growth_b4(t, beta, tau), data = b_q4_df, start = list(beta = 1, tau = 1))
-
-
+b_q4 <- nls(b_q4_df$concentration ~ growth_b4(t, beta, tau), 
+            data = b_q4_df, start = list(beta = 1, tau = 3.9))
 
 coef_b4 <- coef(b_q4)
 
@@ -205,13 +210,15 @@ coef_b4 <- coef(b_q4)
 b_q4_df %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point(aes(color = "blue")) + 
-  grom_point(data = novick_b, aes(color = "red"))
+  geom_point(data = novick_b, aes(color = "red"))+
   labs( 
     title = "growth of beta-gal", 
     subtitle = "in response to high TMG concentration", 
     x = "time (hours)", 
-    y = "fraction of maximum beta-gal"
-  )  +
+    y = "fraction of maximum beta-gal")  +
+  geom_abline(color = "red",
+              intercept = coef_b2[[1]], 
+              slope = coef_b2[[2]]) +
   stat_function(fun = growth_b4, 
                 args = c(beta = coef_b4[[1]], 
                          tau = coef_b4[[2]]))
