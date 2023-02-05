@@ -62,13 +62,31 @@ data_comb %>%
 
 ```
 
-##Analysis:
+## Analysis:
+
+### Derivation of Functions used for fitting both datasets:
+
+I will first define the different terms that will be used.
+
+$N$ is the number of individual E.coli bacteria in the chemostat, which is maintained at a constant value.
+
+$Q$ is the flow rate both in- and outward from the chemostat, which is kept at a constant value so that $N$ can be kept constant.
+
+$V$ is the volume of the chemostat
+
+$S$ we define as the average rate of production by any individual bacterium at a given time. Note this is not the rate of production by individual bacterium but the mean of the population. Hence this value would change based on how many bacterium are "activated" within the population. 
+
+$z$ is defined as the concentration of \beta-gal within the system at any moment. With these terms defined, we observe that at any moment, the growth of \beta-gal is $\frac{dz}{dt}$, which equates two terms: the rate of production by the bacteria and the rate of loss due to flow rate. Hence we get the equation: $$\frac{dz}{dt} = Ns - \frac{Q}{V}z$$
+
+#### A: High Concentration of Inducers  
+For data set A, when the inducers are introduced at high concentration, we assume that $S$  is constant as all bacteria rapidly "switches on" and generates enzyme at its maximal rate. We can then express $t$ as a dimensionless variable as $\tilde{t} \frac{V}{Q}$, hence: 
+
+$$\frac{dz}{dt} = \frac{V N S}{Q} - z $$
+
+#### B: Low concentration of Inducers  
+For data set B, when the inducers are introduced at low concentration, only a fraction of bacteria is activated, with this fraction slowly growing. Hence we assume that $S$ is a linear function of $\tilde{t}$  with $S(\tilde{t}) = \alpha \tilde{t}$ and \alpha being the rate at which activation "spreads" through the population. 
 
 ### Fitting function on Data set A
-
-### derivation:
-
-I will first define the different terms that will be used. $N$ is the number of individual E.coli bacteria in the chemostat, which is maintained at a constant value. $Q$ is the flow rate both in- and outward from the chemostat, which is kept at a constant value so that $N$ can be kept constant. $V$ is the volume of the chemostat $S$ we define as the rate of production by any individual bacterium at a given time. According to Hypothesis A, S is constant; but according Hypothesis B, S is a function of time. $z$ is defined as the concentration of \beta-gal within the system at any moment. With these terms defined, we observe that at any moment, the growth of \beta-gal is $\frac{dz}{dt}$, which equates two terms: the rate of production by the bacteria and the rate of loss due to flow rate. Hence we get the equation: $$\frac{dz}{dt} = Ns - \frac{Qz}{V}$$
 
 ```{r a_q2}
 #define function
