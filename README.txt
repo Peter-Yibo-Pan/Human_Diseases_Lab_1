@@ -1,9 +1,9 @@
-Questions for 2/1/23: 
+Questions for 2/6/23: 
 
-What is the range for time for each? Should they be the same as dataset or a continuous range from 0
-it's good
+What does each hypotheses mean for the growth (linear vs. nonlinear) in low concentration situation? What does it mean for high concentration? 
+  For high concentration, do both hypotheses predict the production leveling off due to flow rate? 
+  
 
-in derivation, how to explain the physical meaning of other items such as Volume, Number, and Flow Rate
-a: manipulate the code to see the physical meaning (ex, ampl is the max/asymptote)
+For b_q2 is MSE a good enough way to say the linear function fits well only for the middle bit
 
-How to use / explain the use of starting values for functions
+For the taylor expansion, what's the justification for not going beyond second term?

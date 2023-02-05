@@ -1,16 +1,18 @@
 ---
 title: 'Molecular Mechanisms for Human Diseases: Lab 1'
 subtitle: "Bacteria's Brain -- Part A"
+author: "Peter Yibo Pan"
 date: (`r Sys.Date()`)
 output:
-  html_document:
-    toc: yes
+  word_document:
+    reference_docx: reference-word.docx
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(glue)
+library(knitr)
 theme_set(theme_minimal())
 
 ```
@@ -24,9 +26,9 @@ novick_a <- novick_a %>%
   # separate columns and add titles;
   separate_wider_delim(1, ",", names = c("t", "concentration")) %>%
   # render as number
-  mutate_if(is.character, as.numeric) %>%
+  mutate_if(is.character, as.numeric)
   # show result
-  print()
+kable(signif(novick_a, 3))
 
 #import B; 
 novick_b <- read.csv("data/g149novickB.csv", header = FALSE) 
@@ -34,9 +36,9 @@ novick_b <- novick_b %>%
   # separate columns and add titles;
   separate_wider_delim(1, ",", names = c("t", "concentration")) %>% 
   # render as number
-  mutate_if(is.character, as.numeric) %>%
+  mutate_if(is.character, as.numeric) 
   # show result
-  print()
+kable(signif(novick_b, 3))
 
 ```
 
@@ -54,7 +56,7 @@ data_comb %>%
   ggplot(aes(x = t, y = concentration)) +
   labs(
     title = expression(paste("Growth of  ", beta, "-gal")), 
-    subtitle = "In response to high and low TMG concentration",
+    subtitle = "In response to high and low inducer concentration",
     x = "time (hours)", 
     y = expression(paste("concentration of  ", beta, "-gal"))
   ) + geom_point() +
@@ -174,7 +176,8 @@ novick_b %>%
   geom_point(color = "blue") + 
   geom_point(data = b_q2, aes(color = "red"))+ 
   labs(
-    title = expression(paste("Growth of  ", beta, "-gal")), 
+    title = expression(paste("Growth of  ", beta, 
+                             "-gal Fitted to Linear Function")), 
     subtitle = "in response to lower TMG concentration", 
     x = "time (hours)", 
     y = expression(paste("fraction of maximum  ", beta, "-gal"))
@@ -218,14 +221,15 @@ novick_b %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point() + 
   labs( 
-    title = expression(paste("Growth of  ", beta, "-gal")), 
+    title = expression(paste("Growth of  ", beta, 
+                             "-gal Fitted to Nonlinear Function")), 
     subtitle = "in response to lower TMG concentration", 
     x = "time (hours)", 
     y = expression(paste("fraction of maximum  ", beta, "-gal"))
   )  +
   stat_function(fun = growth_b3, 
                 args = c(ampl = 0.4, 
-                         tau = 7))
+                         tau = 9))
 ```
 
 ```{r b_q4}
@@ -240,7 +244,7 @@ growth_b4 <- function (t, beta, tau) (beta * (-1 + t/tau + exp(-t/tau)))
 
 # fit function
 b_q4 <- nls(b_q4_df$concentration ~ growth_b4(t, beta, tau), 
-            data = b_q4_df, start = list(beta = 1, tau = 3.9))
+            data = b_q4_df, start = list(beta = 1, tau = 4))
 
 coef_b4 <- coef(b_q4)
 
@@ -248,24 +252,28 @@ coef_b4 <- coef(b_q4)
 # the data of t>15 is in blue and the rest is in red
 
 b_q4_df %>%
-  ggplot(aes(x = t, y = concentration)) + 
-  geom_point(data = novick_b, color = "red")+
-  geom_point(color = "blue") + 
+  ggplot(aes(x = t, y = concentration)) +
+  geom_point(data = novick_b, color = "black")+
+  geom_point(aes(color = 'Nonlinear'))+
+  geom_point(data = b_q2, aes(color = 'Linear')) + 
   labs( 
-    title = expression(paste("Growth of  ", beta, "-gal")), 
+    title = expression(paste("Growth of  ", beta, 
+                             "-gal Fitted Comparisons Between Two Functions")), 
     subtitle = "in response to high TMG concentration", 
     x = "time (hours)", 
     y = expression(paste("fraction of maximum  ", beta, "-gal"))
-    )  +
-  geom_abline(color = "red",
+    ) +
+  geom_abline(color = "red", 
               intercept = coef_b2[[1]], 
               slope = coef_b2[[2]]) +
-  stat_function(fun = growth_b4, 
+  stat_function(aes(color = 'Nonlinear'), 
+                fun = growth_b4, 
                 args = c(beta = coef_b4[[1]], 
-                         tau = coef_b4[[2]])) +
-  theme(legend.position = "none")
+                         tau = coef_b4[[2]]))
+
+b_q4 %>% 
+  summary() %>%
+  print()
 ```
 
 Q5: at large t, the function becomes linear as -t/tau becomes 0 so exp(-t/tau) becomes a constant of 1
-
-Analysis:

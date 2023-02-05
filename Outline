@@ -1,29 +1,65 @@
 Introduction / Abstract
-  distallation of report, Question (lab question 1c)
+  distillation of report (1-paragraph abstract)
+  
+  Question (lab question 1c)
+  
+  Lab question 1c: 
+  Previous studies: 
+  Benzer (), Monod() supports that each individual bacterium produces at a rate representative of the entire population; only for high inducer concentrations. 
+  For low inducer concentrations, the role of the transporter and preinduced bacteria is considered to show that the concentration of transporters will also be low. Hence some bacterium will necessarily start producing enzyme before others, which conflicts with the observation at high concentration. 
+  Hence the question arises of whether b-gal production is always uniform within the population with varying rate of production at the individual bacterium level, or if the production is dependent on the proportion of individual bacteria activated, which produces at either none or max rate. 
+  
+  greater significance and consequence: 
+  Addition problems, 1: modern use
   
 Experiment
   ways of measuring, limits to the design, elegant parts (lab question 1a, b)
   hypotheses
   
+  Lab question 1a: 
+  Between the two trials, the concentration of inducers is altered from high to low. According to Hypotheses ___, when inducers are introduced at a high concentration, all of the cells in the population would be rapidly induced and start producing enzyme at a steady rate, meanwhile this rate of induction is much more gradual if the inducer is introduced at a low volume. However, according to Hypothesis ___, the all cells would be induced rapidly after the introduction of the inducers regardless of its concentration. However, the rate of production for each cell slowly increases with time. 
+  
+  Lab question 1b: 
+  The rate of b-gal activity is measured by the rate ONPG is hydrolyzed by the bacteria (Novick, 555). 
+  The technique used and the obtical density is found here: 
+  https://journals.asm.org/doi/epdf/10.1128/jb.60.4.381-392.1950 
+  (page 382)
+  
+  
+  
 Results
 
-  A1,2,3,4
-  B1,2,3,4
+  Derivation (lab question 2, A5, B6)
+  Reason for using models 
   
   Analysis
-  reason for using models and functions 
-  (lab question 2, A5,6; B5,6,7)
-
+  A1,2,3,4
+  A6, 
+  
+  B1,2,3,4
+  B5, 7
+  
   confidence & accuracy (lab question 3)
 
 Discussion
-  support for hypoteses (lab questoin 4)
+  support for hypotheses (lab questoin 4)
+  future experiment (lab question 5)
 
 Figures
 
 Conclusion & additional questions
-  additional questions 1
-  conclusions
-  addi
+  conclusions & consequence
+
+  additional questions 2, 3
+  
+  additional questions 4 (Monod experiment, derivation)
+  
+  
 
 References
+
+Novick paper; 
+textbook; 
+https://journals.asm.org/doi/epdf/10.1128/jb.60.4.381-392.1950 
+Hughes et al (PNAS, 93 2065-2070, 1996)
+Monod experiment

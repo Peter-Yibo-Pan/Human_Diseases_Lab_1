@@ -1,0 +1,9 @@
+---
+title: 'Molecular Mechanisms for Human Diseases: Lab 1'
+subtitle: "Bacteria's Brain -- Part A"
+date: (`r Sys.Date()`)
+output: word_document
+---
+This is an R Markdown document. Markdown is a simple 
+formatting syntax for authoring HTML, PDF, and MS Word 
+documents. For more details ...
