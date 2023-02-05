@@ -7,3 +7,10 @@ What does each hypotheses mean for the growth (linear vs. nonlinear) in low conc
 For b_q2 is MSE a good enough way to say the linear function fits well only for the middle bit
 
 For the taylor expansion, what's the justification for not going beyond second term?
+
+a_q6: the behavior is exponential decay. But what is decaying? 
+
+Another question: S being not a linear function of t?
+Glucose and inhibition effect: is it similar to induction by TMG
+
+What's the difference between Residual Standard Error and Mean Standard Error

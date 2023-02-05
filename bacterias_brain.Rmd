@@ -1,7 +1,7 @@
 ---
 title: 'Molecular Mechanisms for Human Diseases: Lab 1'
 subtitle: "Bacteria's Brain -- Part A"
-author: "Peter Yibo Pan"
+author: "Peter Yibo Pan, collaborators: "
 date: (`r Sys.Date()`)
 output:
   word_document:
@@ -83,12 +83,33 @@ $z$ is defined as the concentration of \beta-gal within the system at any moment
 #### A: High Concentration of Inducers  
 For data set A, when the inducers are introduced at high concentration, we assume that $S$  is constant as all bacteria rapidly "switches on" and generates enzyme at its maximal rate. We can then express $t$ as a dimensionless variable as $\tilde{t} \frac{V}{Q}$, hence: 
 
-$$\frac{dz}{dt} = \frac{V N S}{Q} - z $$
-
+$$\frac{dz}{d\tilde{t}} = \frac{V N S}{Q} - z $$
+We can prepare the function for integration by substituting $\frac{NSV}{Q} = A$: 
+$$\frac{1}{A - z} dz = d\tilde{t}$$
+We then integrate both sides: 
+$$\int \frac{1}{A - z} dz = \int d\tilde{t}$$
+$$-\ln|A-z| = \tilde{t} + C$$
+$$A - z = e^{-\tilde{t}-C}$$
+$$z = A - e^{-\tilde{t}} e^{C}$$
+Considering the fact that $z(0) = 0$, we conclude that $e^{C} = A$
+Hence: 
+$$z = A(1 - e^{-\tilde{t}})$$
+We substitute $A$ and $\tilde{t}$ with their original values: 
+$$z = \frac{NSV}{Q} (1 - e^{-\frac{Q}{V}t})$$
+ 
 #### B: Low concentration of Inducers  
 For data set B, when the inducers are introduced at low concentration, only a fraction of bacteria is activated, with this fraction slowly growing. Hence we assume that $S$ is a linear function of $\tilde{t}$  with $S(\tilde{t}) = \alpha \tilde{t}$ and \alpha being the rate at which activation "spreads" through the population. 
+Hence we again start with the equation: 
+$$\frac{dz}{d\tilde{t}} = \frac{V N S}{Q} - z $$
+However, we substitute $S$ as a function of t
+$$\frac{dz}{d\tilde{t}} = \frac{V N \alpha}{Q}\tilde{t} - z $$
+Again using a dimensionless substitution, this time for $z$ as $z = \frac{VN\alpha}{Q} \tilde{z} $
+We arrive at 
+$$\frac{d\tilde{z}}{d\tilde{t}} = \tilde{t} - \tilde{z} $$
 
 ### Fitting function on Data set A
+From the derived equation A: $z = \frac{NSV}{Q} (1 - e^{-\frac{Q}{V}t})$, we set the two parameters $A = \frac{NSV}{Q} $ and $\tau = \frac{V}{Q}$ so the equation is of the form: 
+$$z = A(1 - e^{-\frac{t}{\tau}})$$
 
 ```{r a_q2}
 #define function
@@ -98,7 +119,7 @@ growth_a <- function (t, ampl, tau) (ampl*(1- exp(-(t/tau))))
 a_q2_fn <- nls(novick_a$concentration ~ growth_a(t, ampl, tau), data = novick_a, start = list(ampl = 1.26, tau = 2.62))
 
 # store coefficients
-coef_a2 <- coef(a_q2_fn)
+coef_a2 <- data.frame(values = signif(coef(a_q2_fn), 4), data = "dataset A")
 
 # plot fitted curve over data
 novick_a %>%
@@ -113,6 +134,7 @@ novick_a %>%
   stat_function(fun = growth_a, 
                 args = c(ampl = coef_a2[[1]], 
                          tau = coef_a2[[2]]))
+kable(coef_a2)
 ```
 
 With the coefficients calculated, the nonlinear fitting of A results in the function:
@@ -129,12 +151,11 @@ a_q3_df <- novick_a %>%
 # fit data again
 a_q3_fit <- nls(a_q3_df$concentration ~ growth_a(t, ampl, tau), data = a_q3_df, start = list(ampl = 1.26, tau = 2.62))
 
-coef_a3 <- coef(a_q3_fit)
-
+coef_a3 <- data.frame(values = signif(coef(a_q3_fit), 4), data = "with (0,0)")
 coef_comp <- coef_a2 %>% 
-  rbind (coef_a3) %>%
-  print()
-print(summary(a_q3_fit))
+  rbind (coef_a3) 
+
+kable(data.frame(values = signif(coef(a_q2_fn), 4)))
 # plot new fitted curve over data
 a_q3_df %>%
   ggplot(aes(x = t, y = concentration)) + 
@@ -150,12 +171,19 @@ a_q3_df %>%
     fun = growth_a, 
                 args = c(ampl = coef_a3[[1]], 
                          tau = coef_a3[[2]]))
+kable(coef_comp)
+print(summary(a_q3_fit))
+
+## predict and calculate MSE for model
+a_q3_pred <- predict(a_q3_fit, newdata = data.frame(t = a_q3_df$t))
+a_q3_mse <- mean((a_q3_df$concentration - a_q3_pred)^2)
 
 ```
 
-We see that here the two fitting parameters are identical before and after $(0,0)$ is included.
+We see that here the two fitting parameters are identical before and after $(0,0)$ is included. This is reasonable according to the theory since there would be no \beta-gal production before any inducer is introduced. Mathematically, $z(0) = 0$. The fitting returns a residual standard error of RSE = `r signif(summary(a_q3_fit)$sigma, 3)`; the mean standard error returns as MSE = `r signif(a_q3_mse, 3)`. 
 
-Fitting function on Data set B
+### Fitting function on Data set B
+First we start by fitting a straight line over the range $10 \le t \le 15 $
 
 ```{r b_q2}
 # get data for 10<=t<=15
