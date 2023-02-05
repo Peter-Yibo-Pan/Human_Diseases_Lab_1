@@ -203,7 +203,7 @@ tibble(MSE = c(b_q2_mse, b_q2_mse_all)) %>%
 
 ```
 
-As we can see, the Mean Standard Error (MSE) for the model fits well within the range of 10\<= t \<= 15, but not well over the entire data set.
+As we can see, the Mean Standard Error (MSE) for the model fits much better within the range of 10\<= t \<= 15 with a MSE of `r b_q2_mse`, but not well over the entire data set with a MSE of `r b_q2_mse_all`.
 
 ```{r b_q3}
 # fit function from a
