@@ -167,8 +167,7 @@ a_q3_df %>%
     x = "time (hours)", 
     y = expression(paste("concentration of  ", beta, "-gal"))
   )+
-  stat_function(color = "blue", 
-    fun = growth_a, 
+  stat_function(fun = growth_a, 
                 args = c(ampl = coef_a3[[1]], 
                          tau = coef_a3[[2]]))
 kable(coef_comp)
