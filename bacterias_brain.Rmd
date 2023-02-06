@@ -258,13 +258,14 @@ novick_b %>%
                          tau = 15)) +
   stat_function(aes(color = "Fitting A"),
                 fun = growth_b3, 
-                args = c(ampl = 20, 
-                         tau = 8)) +
-  scale_color_manual(breaks = )
+                args = c(ampl = 1, 
+                         tau = 5)) 
 ```
 
-While attempting to fit data set A's function ($z(t) = A(1 - e^{-\frac{t}{\tau}})$) over data set B, we realize that it is impossible to fit. If we were to fit the function around the range $t \le 15$, the data point would inevitably exceed the value for $A$ (See Figure 5a), which is impossible since $A$ defines the theoretical maximum amount of \beta-gal that can exist in the system. Alternatively, if we try to find a value for $A$, it would be 
+While attempting to fit data set A's function ($z(t) = A(1 - e^{-\frac{t}{\tau}})$) over data set B, we realize that it is impossible to fit. If we were to fit the function around the range $t \le 15$, the data point would inevitably exceed the value for $A$, which is impossible since $A$ defines the theoretical maximum amount of \beta-gal that can exist in the system, as it is defined as $\frac{NSV}{Q}$. Hence the amount of \beta-gal should only asymptotically approach the value for $A$. If we try to find a value for $A$, the value would be unreasonably high to the point where the function is irrelevant to the data (See Figure 5). 
+Hence we need to use the different function derived earlier to fit data set B. 
 
+$$ z(t) = B(-1 + \frac{t}{\tau} + e^{-\frac{t}{\tau}})$$
 
 ```{r b_q4}
 # Separate data for t<= 15
@@ -287,11 +288,11 @@ coef_b4 <- coef(b_q4)
 
 b_q4_df %>%
   ggplot(aes(x = t, y = concentration)) +
-  geom_point(data = novick_b, color = "black")+
+  geom_point(data = novick_b, aes(color = 'unfitted data'))+
   geom_point(aes(color = 'Nonlinear'))+
   geom_point(data = b_q2, aes(color = 'Linear')) + 
   labs( 
-    title = expression(paste("Growth of  ", beta, 
+    title = expression(paste("Figure 6: Growth of  ", beta, 
                              "-gal Fitted Comparisons Between Two Functions")), 
     subtitle = "in response to high TMG concentration", 
     x = "time (hours)", 
@@ -309,7 +310,7 @@ b_q4 %>%
   summary() %>%
   print()
 ```
-
+As shown in figure 6, 
 ## Appendix: 
 Complete Data: 
 ```{r appendix}
