@@ -18,7 +18,7 @@ theme_set(theme_minimal())
 ```
 
 ##Results:
-
+The complete resulting data can be seen in tables 1 and 2 in the appendix, and as shown in table 1a and 1b: 
 ```{r import data}
 #import A;
 novick_a <- read.csv("data/g149novickA.csv", header = FALSE) 
@@ -27,8 +27,6 @@ novick_a <- novick_a %>%
   separate_wider_delim(1, ",", names = c("t", "concentration")) %>%
   # render as number
   mutate_if(is.character, as.numeric)
-  # show result
-kable(signif(novick_a, 3))
 
 #import B; 
 novick_b <- read.csv("data/g149novickB.csv", header = FALSE) 
@@ -37,7 +35,6 @@ novick_b <- novick_b %>%
   separate_wider_delim(1, ",", names = c("t", "concentration")) %>% 
   # render as number
   mutate_if(is.character, as.numeric) 
-  # show result
 kable(signif(novick_b, 3))
 
 ```
@@ -55,7 +52,7 @@ data_comb <- novick_a %>%
 data_comb %>%
   ggplot(aes(x = t, y = concentration)) +
   labs(
-    title = expression(paste("Growth of  ", beta, "-gal")), 
+    title = expression(paste("Figure 1: Growth of  ", beta, "-gal")), 
     subtitle = "In response to high and low inducer concentration",
     x = "time (hours)", 
     y = expression(paste("concentration of  ", beta, "-gal"))
@@ -119,14 +116,15 @@ growth_a <- function (t, ampl, tau) (ampl*(1- exp(-(t/tau))))
 a_q2_fn <- nls(novick_a$concentration ~ growth_a(t, ampl, tau), data = novick_a, start = list(ampl = 1.26, tau = 2.62))
 
 # store coefficients
-coef_a2 <- data.frame(values = signif(coef(a_q2_fn), 4), data = "dataset A")
+coef_a2 <- coef(a_q2_fn)
+coef_a2_df <- data.frame(data = "dataset A", values = signif(coef_a2, 4))
 
 # plot fitted curve over data
 novick_a %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point(data = novick_a) + 
   labs( 
-    title = expression(paste("Growth of  ", beta, "-gal")), 
+    title = expression(paste("Figure 2: Growth of  ", beta, "-gal")), 
     subtitle = "in response to high TMG concentration", 
     x = "time (hours)", 
     y = expression(paste("concentration of  ", beta, "-gal"))
@@ -134,7 +132,7 @@ novick_a %>%
   stat_function(fun = growth_a, 
                 args = c(ampl = coef_a2[[1]], 
                          tau = coef_a2[[2]]))
-kable(coef_a2)
+kable(coef_a2_df)
 ```
 
 With the coefficients calculated, the nonlinear fitting of A results in the function:
@@ -151,23 +149,23 @@ a_q3_df <- novick_a %>%
 # fit data again
 a_q3_fit <- nls(a_q3_df$concentration ~ growth_a(t, ampl, tau), data = a_q3_df, start = list(ampl = 1.26, tau = 2.62))
 
-coef_a3 <- data.frame(values = signif(coef(a_q3_fit), 4), data = "with (0,0)")
+coef_a3 <- coef(a_q3_fit)
 coef_comp <- coef_a2 %>% 
-  rbind (coef_a3) 
+  rbind (data.frame(data = "with (0,0)", values = signif(coef(a_q3_fit), 4))) 
 
-kable(data.frame(values = signif(coef(a_q2_fn), 4)))
 # plot new fitted curve over data
 a_q3_df %>%
   ggplot(aes(x = t, y = concentration)) + 
   geom_point(color = "blue")+
   geom_point(data = novick_a) + 
   labs( 
-    title = expression(paste("Growth of  ", beta, "-gal")), 
+    title = expression(paste("Figure 3: Growth of  ", beta, "-gal")), 
     subtitle = "in response to high TMG concentration", 
     x = "time (hours)", 
     y = expression(paste("concentration of  ", beta, "-gal"))
   )+
-  stat_function(fun = growth_a, 
+  stat_function(color = "blue", 
+                fun = growth_a, 
                 args = c(ampl = coef_a3[[1]], 
                          tau = coef_a3[[2]]))
 kable(coef_comp)
@@ -179,7 +177,7 @@ a_q3_mse <- mean((a_q3_df$concentration - a_q3_pred)^2)
 
 ```
 
-We see that here the two fitting parameters are identical before and after $(0,0)$ is included. This is reasonable according to the theory since there would be no \beta-gal production before any inducer is introduced. Mathematically, $z(0) = 0$. The fitting returns a residual standard error of RSE = `r signif(summary(a_q3_fit)$sigma, 3)`; the mean standard error returns as MSE = `r signif(a_q3_mse, 3)`. 
+We see that here the two fitting parameters are identical before and after $(0,0)$ is included. This is reasonable according to the theory since there would be no \beta-gal production before any inducer is introduced. Mathematically, $z(0) = 0$. The fitting returns a residual standard error of RSE = `r signif(summary(a_q3_fit)$sigma, 3)`; the mean standard error returns as MSE = `r signif(a_q3_mse, 3)`. The two measures of error are both quite small, hence we conclude that the model is a good fit for the data. 
 
 ### Fitting function on Data set B
 First we start by fitting a straight line over the range $10 \le t \le 15 $
@@ -203,7 +201,7 @@ novick_b %>%
   geom_point(color = "blue") + 
   geom_point(data = b_q2, aes(color = "red"))+ 
   labs(
-    title = expression(paste("Growth of  ", beta, 
+    title = expression(paste("Figure 4: Growth of  ", beta, 
                              "-gal Fitted to Linear Function")), 
     subtitle = "in response to lower TMG concentration", 
     x = "time (hours)", 
@@ -233,7 +231,7 @@ tibble(MSE = c(b_q2_mse, b_q2_mse_all)) %>%
 
 ```
 
-As we can see, the Mean Standard Error (MSE) for the model fits much better within the range of 10\<= t \<= 15 with a MSE of `r b_q2_mse`, but not well over the entire data set with a MSE of `r b_q2_mse_all`.
+As shown in figure 4, the straight line (in red) is fitted over the data between 10 and 15 hours, over which the line fits quite well. the Mean Standard Error (MSE) for the model is much smaller within the range of 10\<= t \<= 15 with a MSE of `r b_q2_mse`, but not well over the entire data set with a MSE of `r b_q2_mse_all`. Near the low end of t, 
 
 ```{r b_q3}
 # fit function from a
@@ -303,4 +301,11 @@ b_q4 %>%
   print()
 ```
 
-Q5: at large t, the function becomes linear as -t/tau becomes 0 so exp(-t/tau) becomes a constant of 1
+## Appendix: 
+Complete Data: 
+```{r appendix}
+kable(signif(novick_a, 3))
+kable(signif(novick_b, 3))
+
+```
+
