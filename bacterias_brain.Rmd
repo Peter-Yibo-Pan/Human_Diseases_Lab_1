@@ -8,6 +8,29 @@ output:
     reference_docx: reference-word.docx
 ---
 
+## Abstract
+
+
+
+
+
+## Experiment
+
+### Method
+
+
+### Setup
+
+
+
+
+
+
+
+
+
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
@@ -17,7 +40,7 @@ theme_set(theme_minimal())
 
 ```
 
-##Results:
+## Results:
 The complete resulting data can be seen in tables 1 and 2 in the appendix, and as shown in table 1a and 1b: 
 ```{r import data}
 #import A;
@@ -35,11 +58,9 @@ novick_b <- novick_b %>%
   separate_wider_delim(1, ",", names = c("t", "concentration")) %>% 
   # render as number
   mutate_if(is.character, as.numeric) 
-kable(signif(novick_b, 3))
-
 ```
 
-Visualization of Data set A and B
+### Visualization of Data set A and B
 
 ```{r a_Q1}
 
@@ -63,9 +84,10 @@ data_comb %>%
 
 ## Analysis:
 
-### Derivation of Functions used for fitting both datasets:
 
-I will first define the different terms that will be used.
+### Derivation A: High Concentration of Inducers 
+(question A.5) 
+I will first define the different terms that will be used.These terms will be used for derivations for both data sets. 
 
 $N$ is the number of individual E.coli bacteria in the chemostat, which is maintained at a constant value.
 
@@ -75,9 +97,7 @@ $V$ is the volume of the chemostat
 
 $S$ we define as the average rate of production by any individual bacterium at a given time. Note this is not the rate of production by individual bacterium but the mean of the population. Hence this value would change based on how many bacterium are "activated" within the population. 
 
-$z$ is defined as the concentration of \beta-gal within the system at any moment. With these terms defined, we observe that at any moment, the growth of \beta-gal is $\frac{dz}{dt}$, which equates two terms: the rate of production by the bacteria and the rate of loss due to flow rate. Hence we get the equation: $$\frac{dz}{dt} = Ns - \frac{Q}{V}z$$
-
-#### A: High Concentration of Inducers  
+$z$ is defined as the concentration of $\beta$-gal within the system at any moment. With these terms defined, we observe that at any moment, the growth of $\beta$-gal is $\frac{dz}{dt}$, which equates two terms: the rate of production by the bacteria and the rate of loss due to flow rate. Hence we get the equation: $$\frac{dz}{dt} = Ns - \frac{Q}{V}z$$
 For data set A, when the inducers are introduced at high concentration, we assume that $S$  is constant as all bacteria rapidly "switches on" and generates enzyme at its maximal rate. We can then express $t$ as a dimensionless variable as $\tilde{t} \frac{V}{Q}$, hence: 
 
 $$\frac{dz}{d\tilde{t}} = \frac{V N S}{Q} - z $$
@@ -91,20 +111,17 @@ $$z = A - e^{-\tilde{t}} e^{C}$$
 Considering the fact that $z(0) = 0$, we conclude that $e^{C} = A$
 Hence: 
 $$z = A(1 - e^{-\tilde{t}})$$
-We substitute $A$ and $\tilde{t}$ with their original values: 
+Or: 
 $$z = \frac{NSV}{Q} (1 - e^{-\frac{Q}{V}t})$$
- 
-#### B: Low concentration of Inducers  
-For data set B, when the inducers are introduced at low concentration, only a fraction of bacteria is activated, with this fraction slowly growing. Hence we assume that $S$ is a linear function of $\tilde{t}$  with $S(\tilde{t}) = \alpha \tilde{t}$ and \alpha being the rate at which activation "spreads" through the population. 
-Hence we again start with the equation: 
-$$\frac{dz}{d\tilde{t}} = \frac{V N S}{Q} - z $$
-However, we substitute $S$ as a function of t
-$$\frac{dz}{d\tilde{t}} = \frac{V N \alpha}{Q}\tilde{t} - z $$
-Again using a dimensionless substitution, this time for $z$ as $z = \frac{VN\alpha}{Q} \tilde{z} $
-We arrive at 
-$$\frac{d\tilde{z}}{d\tilde{t}} = \tilde{t} - \tilde{z} $$
+Which fit the form: 
+$$z = A(1 - e^{-\frac{t}{\tau}})$$ 
+with $A = \frac{NSV}{Q}$ and $\tau = \frac{V}{Q}$. 
+The equation can be interpreted with $A$ being the theoretical maximum level of $\beta$-gal that can possibly exist in the system defined by its Volume, the Number of bacteria, the individual rate of production, and the flow rate, since
+$$\displaystyle \lim_{t \to \infty} z(t) = A = \frac{NSV}{Q} $$
+In addition, $\tau$ can be understood as being the speed at which the system asymptotically approaches $A$. If we return to the original equation $\frac{dz}{dt} = Ns - \frac{Q}{V}z$, we see that the equation can be seen as $\frac{dz}{dt} = Ns - \frac{z}{\tau}$  meaning the rate of accumulation of the enzyme is negatively and linearly proportional to $\tau$, which is the probability (or proportion) of existing $\beta$-gal that will be lose due to system's flow rate. This can be seen in the final equation in the term of $e^{-\frac{t}{\tau}}$ which describes an exponential decay. In this case, the decaying factor is the growth of the rate of accumulation of $\beta$-gal. As more enzyme accumulates in the system, it becomes more and more likely to be washed away by constant flow out of the system, hence would accumulate slower and slower, eventually reaching equilibrium. 
 
-### Fitting function on Data set A
+### Fitting function on Data set A 
+(questions A.1, A.2)
 From the derived equation A: $z = \frac{NSV}{Q} (1 - e^{-\frac{Q}{V}t})$, we set the two parameters $A = \frac{NSV}{Q} $ and $\tau = \frac{V}{Q}$ so the equation is of the form: 
 $$z = A(1 - e^{-\frac{t}{\tau}})$$
 
@@ -137,7 +154,7 @@ kable(coef_a2_df)
 
 With the coefficients calculated, the nonlinear fitting of A results in the function:
 
-$$z(t) = A(1 - e^{-\frac{t}{\tau}})$$ With A = `r signif(coef_a2[[1]], 3)` and \tau = `r signif(coef_a2[[2]], 3)` We observe that at $t = 0$, $z(t) = 0$, which is valid in its physical meaning, as there would be no \beta-gal before any inducers are introduced. Hence, the data point $(0,0)$ is included into the data and the same model is fitted again.
+$$z(t) = A(1 - e^{-\frac{t}{\tau}})$$ With A = `r signif(coef_a2[[1]], 3)` and \tau = `r signif(coef_a2[[2]], 3)` We observe that at $t = 0$, $z(t) = 0$, which is valid in its physical meaning, as there would be no $\beta$-gal before any inducers are introduced. Hence, the data point $(0,0)$ is included into the data and the same model is fitted again. (questions A.3, A.4)
 
 ```{r a_q3}
 
@@ -177,9 +194,35 @@ a_q3_mse <- mean((a_q3_df$concentration - a_q3_pred)^2)
 
 ```
 
-We see that here the two fitting parameters are identical before and after $(0,0)$ is included. This is reasonable according to the theory since there would be no \beta-gal production before any inducer is introduced. Mathematically, $z(0) = 0$. The fitting returns a residual standard error of RSE = `r signif(summary(a_q3_fit)$sigma, 3)`; the mean standard error returns as MSE = `r signif(a_q3_mse, 3)`. The two measures of error are both quite small, hence we conclude that the model is a good fit for the data. 
+We see that here the two fitting parameters are identical before and after $(0,0)$ is included. This is reasonable according to the theory since there would be no $\beta$-gal production before any inducer is introduced. Mathematically, $z(0) = 0$. The fitting returns a residual standard error of RSE = `r signif(summary(a_q3_fit)$sigma, 3)`; the mean standard error returns as MSE = `r signif(a_q3_mse, 3)`. The two measures of error are both quite small, hence we conclude that the model is a good fit for the data. (lab question 3)
+
+### Derivation B: Low concentration of Inducers 
+(questions B.6, B.7)
+For data set B, when the inducers are introduced at low concentration, only a fraction of bacteria is activated, with this fraction slowly growing. Hence we assume that $S$ is a linear function of $\tilde{t}$  with $S(\tilde{t}) = \alpha \tilde{t}$ and \alpha being the rate at which activation "spreads" through the population. 
+Hence we again start with the equation: 
+$$\frac{dz}{d\tilde{t}} = \frac{V N S}{Q} - z $$
+However, we substitute $S$ as a function of t
+$$\frac{dz}{d\tilde{t}} = \frac{V N \alpha}{Q}\tilde{t} - z $$
+Again using a dimensionless substitution, this time for $z$ as $z = \frac{VN\alpha}{Q} \tilde{z} $
+We arrive at 
+$$\frac{d\tilde{z}}{d\tilde{t}} = \tilde{t} - \tilde{z} $$
+Which we can rearrange in the form of
+$$\tilde{z}' + \tilde{z} = \tilde{t}$$
+Which we can use an integration factor of $r(t) = e^{\int{dt}} = e^{\tilde{t}}$ which we can multiply both sides of the equation and integrate: 
+$$e^{\int{dt}}\tilde{z}' + e^{\int{dt}}\tilde{z} = e^{\int{dt}}\tilde{t} $$
+$$\frac{d}{dt}[e^{\int{dt}}\tilde{z}] = e^{\int{dt}}\tilde{t}$$
+$$e^{\int{dt}}\tilde{z} = \int{e^{\int{dt}}\tilde{t}} + C$$
+$$e^{\tilde{t}}\tilde{z} = e^{\tilde{t}}(\tilde{t}-1)$$
+$$\tilde{z}=\tilde{t} - 1$$
+
+We realize that this equation does not fit the initial condition of $z(0) = 0$, hence we adding the term $A e^{-\tilde{t}} $ with $A$ being a free constant (not to be confused with $A$ from derivation A), which we adjust to $A = 1$ to satisfy this initial condition, resulting in: 
+$$\tilde{z}=-1 + \tilde{t} + e^{\tilde{t}}$$
+Now we replace $\tilde{t}$ and $ \tilde{z}$ with their physical counterparts: 
+$$ z = \frac{Q}{VN\alpha} (-1 + \frac{Q}{V}t + e^{-\frac{Q}{V}t})$$
+Which fit the form $z = B(-1 + \frac{t}{\tau} + e^{-\frac{t}{\tau}}) $ with $B = \frac{Q}{VN\alpha}$ and $\tau = \frac{V}{Q}$. 
 
 ### Fitting function on Data set B
+#### 1. Linear Function
 First we start by fitting a straight line over the range $10 \le t \le 15 $
 
 ```{r b_q2}
@@ -233,6 +276,8 @@ tibble(MSE = c(b_q2_mse, b_q2_mse_all)) %>%
 
 As shown in figure 4, the straight line (in red) is fitted over the data between 10 and 15 hours, over which the line fits quite well. the Mean Standard Error (MSE) for the model is much smaller within the range of 10\<= t \<= 15 with a MSE of `r b_q2_mse`, but not well over the entire data set with a MSE of `r b_q2_mse_all`. Near the low end of t, 
 
+#### 2. Nonlinear Function from Data Set A
+
 ```{r b_q3}
 # fit function from a
 # define function
@@ -262,10 +307,11 @@ novick_b %>%
                          tau = 5)) 
 ```
 
-While attempting to fit data set A's function ($z(t) = A(1 - e^{-\frac{t}{\tau}})$) over data set B, we realize that it is impossible to fit. If we were to fit the function around the range $t \le 15$, the data point would inevitably exceed the value for $A$, which is impossible since $A$ defines the theoretical maximum amount of \beta-gal that can exist in the system, as it is defined as $\frac{NSV}{Q}$. Hence the amount of \beta-gal should only asymptotically approach the value for $A$. If we try to find a value for $A$, the value would be unreasonably high to the point where the function is irrelevant to the data (See Figure 5). 
+While attempting to fit data set A's function $z(t) = A(1 - e^{-\frac{t}{\tau}})$ over data set B, we realize that it is impossible to fit. If we were to fit the function around the range $t \le 15$, the data point would inevitably exceed the value for $A$, which is impossible since $A$ defines the theoretical maximum amount of $\beta$-gal that can exist in the system as $\frac{NSV}{Q}$. Hence the amount of $\beta$-gal should only asymptotically approach, but never reach the value for $A$. If we try to find a value for $A$, the value would be unreasonably high to the point where the function is irrelevant to the data (See Figure 5). 
 Hence we need to use the different function derived earlier to fit data set B. 
 
 $$ z(t) = B(-1 + \frac{t}{\tau} + e^{-\frac{t}{\tau}})$$
+#### 3. Nonlinear Function Derived for Data Set B
 
 ```{r b_q4}
 # Separate data for t<= 15
@@ -310,7 +356,29 @@ b_q4 %>%
   summary() %>%
   print()
 ```
-As shown in figure 6, 
+As shown in figure 6, the two fitted functions both perform well with respect to the data they are fitted to (i.e. $t <15$ for nonlinear function in green, and $10 < t < 15$ for linear function in red).For the nonlinear function, the fitting returns a residual standard error of RSE = `r signif(summary(b_q4)$sigma, 3)`, which is quite small, hence we conclude that the model is a good fit for the data. (lab question 3) The two functions also converges in the range around $t = 15$. This behavior is accounted for mathematically, as we consider the nonlinear function $ z(t) = B(-1 + \frac{t}{\tau} + e^{-\frac{t}{\tau}})$. 
+If we take the limit as t approaches infinity: 
+
+$$\displaystyle \lim_{t \to \infty}z(t) = -B+ \frac{B}{\tau}t) $$  
+The function becomes linear at large $t$, with the slope defined by $\frac{B}{\tau}$ (question B.5). The mathematical explanation can be complemented by an interpretation of the physical meaning of each term of the fitted function, which can explain the shape of the curve which is parabolic at small $t$ and linear at large $t$. 
+This interpretation can be done with a Taylor Expansion of the function: 
+(question B.7)
+$$ z(t) = B(-1 + \frac{t}{\tau} + e^{-\frac{t}{\tau}})$$
+From which we can get
+$$z^{(1)} = \frac{B}{\tau}(1-e^{-\frac{t}{\tau}}) $$
+$$z^{(2)} = \frac{B}{\tau^2}e^{-\frac{t}{\tau}} $$
+$$z^{(n)} = B(-\frac{1}{\tau})^n e^{-\frac{t}{\tau}} $$
+Hence
+$$\displaystyle \lim_{t \to 0}z(t) = B(-1 + \frac{t}{\tau} + e^{-\frac{t}{\tau}})t^0+
+\frac{B}{\tau}(1-e^{-\frac{t}{\tau}})\frac{t^1}{1!}+
+\frac{B}{\tau^2}e^{-\frac{t}{\tau}}\frac{t^2}{2!} + ...$$
+$$ \displaystyle \lim_{t \to 0}z(t) = 0+0t^1+\frac{B}{\tau^22!}t^2 + ...$$
+As we can see, at small t, the growth of the enzyme is mathematically similar to $t^2$. 
+
+## Dicussion & Conclusion
+
+
+
 ## Appendix: 
 Complete Data: 
 ```{r appendix}
