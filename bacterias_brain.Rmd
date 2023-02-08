@@ -244,11 +244,6 @@ b_q2 <- novick_b %>%
 # fit straight line for 10<= t <= 15
 
 b_q2_fit <- lm(b_q2$concentration ~ b_q2$t)
-b_q2_df <- b_q2_fit %>%
-  coef() %>%
-  signif(3)
-data.frame(coefficient = c("Intercept", "Slope"), value = b_q2_df) %>%
-  print()
 
 coef_b2 <- coef(b_q2_fit)
 
@@ -282,6 +277,13 @@ b_q2_mse <- mean((b_q2$concentration - b_q2_pred)^2)
 
 b_q2_pred_all <- predict(b_q2_fit, newdata = data.frame(t = novick_b$t))
 b_q2_mse_all <- mean((novick_b$concentration - b_q2_pred_all)^2)
+
+b_q2_df <- b_q2_fit %>%
+  coef() %>%
+  signif(3)
+data.frame(coefficient = c("Intercept", "Slope"), value = b_q2_df) %>%
+  kable()
+
 
 tibble(MSE = c(b_q2_mse, b_q2_mse_all)) %>%
   signif(3) %>%
