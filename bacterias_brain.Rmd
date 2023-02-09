@@ -38,7 +38,7 @@ output:
 milliliter per minute at 28$^\circ$C, at pH 7 in M/10 sodium phosphate buffer.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, results = "hide")
+knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(glue)
 library(knitr)
