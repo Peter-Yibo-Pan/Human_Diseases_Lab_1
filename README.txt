@@ -10,3 +10,5 @@ Apologies for the complication as I am unable to submit everything required by t
 The entirety of the assignment can also be found at: 
 
 https://github.com/Peter-Yibo-Pan/Human_Diseases_Lab_1 
+
+The code should be completely reproducible. 
