@@ -4,8 +4,8 @@ subtitle: "Molecular Mechanisms for Human Diseases: Lab 1"
 author: "Peter Yibo Pan, collaborators: Nato Yeung, JJ Pino, Rachel Leech"
 date: (`r Sys.Date()`)
 output:
-  word_document:
-    reference_docx: reference-word.docx
+  html_document:
+    toc: yes
 ---
 
 ## Abstract
@@ -38,7 +38,7 @@ output:
 milliliter per minute at 28$^\circ$C, at pH 7 in M/10 sodium phosphate buffer.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE, results = "hide")
 library(tidyverse)
 library(glue)
 library(knitr)
@@ -420,8 +420,8 @@ b_q4_df %>%
   geom_point(data = b_q2, aes(color = 'Linear')) + 
   labs( 
     title = expression(paste("Figure 6: Growth of  ", beta, 
-                             "-gal Fitted Comparisons Between Two Functions")), 
-    subtitle = "in response to high TMG concentration", 
+                             "-gal Comparisons ")), 
+    subtitle = "in response to low TMG concentration", 
     caption = b_q4_cap, 
     x = "time (hours)", 
     y = expression(paste("fraction of maximum  ", beta, "-gal"))
@@ -505,8 +505,8 @@ hyp_df %>%
   xlim(0, 20) +
   ylim(0, 1) + 
    labs( 
-    title = expression(paste("Figure 7: Hypothetical Growth of  ", beta, 
-                             "-gal in Proposed Experiment")), 
+    title = expression(paste("Figure 7: Hypothetical Growth of ", beta, 
+                             "-gal")), 
     subtitle = "supporting each of the two hypotheses", 
     caption = "If the rate of production differs greatly between populations, the results would
     support hypothesis 2; if rates of production are equal, it would support hypothesis 1.", 
